@@ -69,7 +69,7 @@ class TaskScheduler:
             {hashtags}
             - {article.title}
             
-            - {article.sentiment.article_tldr[0:120]}            
+            - {article.sentiment.article_tldr[0:60]}...            
             {internal_link}
         """
         return tweet_text
