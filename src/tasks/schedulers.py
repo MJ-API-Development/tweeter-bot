@@ -67,10 +67,8 @@ class TaskScheduler:
             EOD Stock API - Financial & Business News
             
             {hashtags}
-            - {article.title}
-            
-            - {article.sentiment.article_tldr[0:60]}...            
-            {internal_link}
+            - {article.title}            
+              {internal_link}
         """
         return tweet_text
 
