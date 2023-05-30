@@ -2,6 +2,7 @@ import asyncio
 
 from fastapi import FastAPI
 from src.config import config_instance
+from src.tasks.schedulers import TaskScheduler
 
 settings = config_instance().APP_SETTINGS
 app = FastAPI(
@@ -23,9 +24,12 @@ app = FastAPI(
     redoc_url=settings.REDOC_URL
 )
 
+scheduler = TaskScheduler()
+
 
 async def scheduled_task():
-    pass
+    while True:
+        await scheduler.run()
 
 
 @app.on_event("startup")
