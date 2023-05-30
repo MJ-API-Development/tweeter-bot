@@ -17,6 +17,8 @@ access_token_secret = config_instance().Tweeter.access_token_secret
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
+FIVE_MINUTE = 300
+
 
 class TaskScheduler:
     def __init__(self):
@@ -25,6 +27,7 @@ class TaskScheduler:
         self._article_queue = Queue()
         self._tweet_queue = Queue()
         self._article_count: int = 50
+        self._error_delay: int = FIVE_MINUTE
         self._logger = init_logger(self.__class__.__name__)
 
     async def get_articles(self):
@@ -105,7 +108,7 @@ class TaskScheduler:
         tweet: str | None = await self._tweet_queue.get()
         if tweet:
             while tweet and not await self.send_tweet(tweet=tweet):
-                await asyncio.sleep(delay=60)
+                await asyncio.sleep(delay=self._error_delay)
                 tweet: str = await self._tweet_queue.get()
 
         return None
