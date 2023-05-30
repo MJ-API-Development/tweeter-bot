@@ -1,20 +1,22 @@
 import asyncio
 from asyncio import Queue
+
 import requests
 import tweepy
+from tweepy import Forbidden
+
 from src.config import config_instance
-from src.models.models import TweetModel, ArticleData
-from src.tweet.send import send_tweet
 from src.logger import init_logger
+from src.models.models import ArticleData
 
 consumer_key = config_instance().Tweeter.consumer_key
 consumer_secret = config_instance().Tweeter.consumer_secret
 access_token = config_instance().Tweeter.access_token
 access_token_secret = config_instance().Tweeter.access_token_secret
 
-
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
+
 
 class TaskScheduler:
     def __init__(self):
@@ -22,7 +24,7 @@ class TaskScheduler:
         self._tweepy_api = tweepy.API(auth=auth)
         self._article_queue = Queue()
         self._tweet_queue = Queue()
-        self._article_count: int = 25
+        self._article_count: int = 50
         self._logger = init_logger(self.__class__.__name__)
 
     async def get_articles(self):
@@ -46,7 +48,14 @@ class TaskScheduler:
             self._logger.error(f"Error fetching articles : {str(e)}")
             return None
 
-    async def do_create_tweet(self, article: ArticleData) -> None:
+    async def send_tweet(self, tweet):
+        try:
+            self._tweepy_api.update_status(status=tweet)
+            return True
+        except Forbidden as e:
+            return False
+
+    async def do_create_tweet(self, article: ArticleData) -> str:
         self._logger.info("Creating Tweets")
         # Extract ticker symbols as hashtags
         hashtags = ' '.join(['#' + ticker for ticker in article.tickers])
@@ -54,13 +63,16 @@ class TaskScheduler:
 
         # Create the tweet text with hashtags
         tweet_text: str = f"""
+        
             {hashtags}
-            🚗 {article.title}
+            - {article.title}
+            
+            - {article.sentiment.article_tldr[0:120]}            
             {internal_link}
         """
+        return tweet_text
 
         # Post the tweet
-        self._tweepy_api.update_status(status=tweet_text)
 
     async def create_tweets(self):
         """
@@ -90,7 +102,10 @@ class TaskScheduler:
 
             await self.create_tweets()
 
-        tweet: TweetModel | None = await self._tweet_queue.get()
+        tweet: str | None = await self._tweet_queue.get()
         if tweet:
-            await send_tweet(tweet=tweet)
+            while tweet and not await self.send_tweet(tweet=tweet):
+                await asyncio.sleep(delay=60)
+                tweet: str = await self._tweet_queue.get()
+
         return None

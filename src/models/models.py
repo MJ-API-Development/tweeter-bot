@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
+from typing import Optional
 
 
 class TweetModel(BaseModel):
@@ -10,9 +11,16 @@ class Sentiment(BaseModel):
     article: str
     article_tldr: str
     link: str
-    sentiment_article: str | None
-    sentiment_title: str | None
-    stock_codes: list[str] | None
+    sentiment_article: None | str
+    sentiment_title: None | str
+    stock_codes: Optional[list[str]]
+
+    @classmethod
+    @validator('stock_codes')
+    def stock_codes(cls, value: list[str] | None):
+        if value is None:
+            return []
+        return value
 
 
 class Resolution(BaseModel):
