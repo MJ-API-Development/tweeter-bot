@@ -26,10 +26,14 @@ app = FastAPI(
 
 scheduler = TaskScheduler()
 
+# this allows me to send 30 tweets over a period of 24 hours
+FIFTY_MINUTES = 3000
+
 
 async def scheduled_task():
     while True:
         await scheduler.run()
+        await asyncio.sleep(delay=FIFTY_MINUTES)
 
 
 @app.on_event("startup")
