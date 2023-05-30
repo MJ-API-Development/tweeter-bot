@@ -19,6 +19,37 @@ auth.set_access_token(access_token, access_token_secret)
 
 FIVE_MINUTE = 300
 
+DEFAULT_TWEETS = [
+    """
+            EOD Stock Market API
+            
+            - Exchange & Ticker Data
+            - (EOD) Stock Data
+            - Fundamental Data
+            - Stock Options And Splits Data
+            - Financial News API
+            - Social Media Trend Data For Stocks
+            - Sentiment Analysis for News & Social Media
+            
+            Create A free API Key today 
+            https://eod-stock-api.site/plan-descriptions/basic
+    """,
+
+    """
+            Financial & Business News API 
+    
+            - Articles By UUID
+            - Articles By Publishing Date
+            - Articles By Stock Tickers
+            - Articles By Exchange
+            - Get List of Exchanges & Tickers
+            - Get List of Publishers & Articles By Publisher
+    
+            Create A free API Key today 
+            https://bit.ly/financial-business-news-api
+    """
+]
+
 
 class TaskScheduler:
     def __init__(self):
@@ -99,6 +130,8 @@ class TaskScheduler:
             response: dict[str, str | dict[str, str] | int] = await self.get_articles()
             if response.get('status'):
                 payload = response.get('payload', [])
+                await self._article_queue.put(DEFAULT_TWEETS[0])
+                await self._article_queue.put(DEFAULT_TWEETS[1])
                 for article in payload:
                     self._logger.info(f"Article : {article}")
                     await self._article_queue.put(item=article)
