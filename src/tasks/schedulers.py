@@ -53,6 +53,7 @@ class TaskScheduler:
             self._tweepy_api.update_status(status=tweet)
             return True
         except Forbidden as e:
+            self._logger.error(f"Error updating status: {str(e)}")
             return False
 
     async def do_create_tweet(self, article: ArticleData) -> str:
@@ -63,7 +64,8 @@ class TaskScheduler:
 
         # Create the tweet text with hashtags
         tweet_text: str = f"""
-        
+            EOD Stock API - Financial & Business News
+            
             {hashtags}
             - {article.title}
             
