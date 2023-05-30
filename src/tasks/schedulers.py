@@ -167,13 +167,9 @@ class TaskScheduler:
 
 def slugify(title: str) -> str:
     """create a slug from title"""
-    slug = title.lower()
-    # Remove non-alphanumeric characters and replace them with dashes
-    slug = re.sub(r'[^a-z0-9]+', '-', slug)
-    # Remove leading and trailing dashes
-    slug = slug.strip('-')
-    # Normalize the slug to remove any diacritical marks or special characters
-    return unicodedata.normalize('NFKD', slug).encode('ascii', 'ignore').decode('utf-8')
+    # Create and Normalize the slug to remove any diacritical marks or special characters
+    return unicodedata.normalize('NFKD', re.sub(r'[^a-z0-9]+', '-',
+                                                title.lower()).strip('-')).encode('ascii', 'ignore').decode('utf-8')
 
 
 def get_filename(url) -> str:
