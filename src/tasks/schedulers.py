@@ -23,9 +23,9 @@ auth.set_access_token(access_token, access_token_secret)
 
 FIVE_MINUTE = 300
 
-DEFAULT_TWEETS = [
-    dict(status=
-         """
+DEFAULT_TWEETS: list[dict[str, str]] = [
+    dict(
+        status="""
             EOD Stock Market API
             
             - Exchange & Ticker Data
@@ -38,9 +38,10 @@ DEFAULT_TWEETS = [
             
             Create A free API Key today 
             https://eod-stock-api.site/plan-descriptions/basic
-    """, media_ids=["1647575420009603073"]),
-    dict(status=
-         """
+            """,
+        media_ids=["1647575420009603073"]),
+    dict(
+        status="""
             Financial & Business News API 
     
             - Articles By UUID
@@ -52,7 +53,8 @@ DEFAULT_TWEETS = [
     
             Create A free API Key today 
             https://bit.ly/financial-business-news-api
-    """, media_ids=["1647575420009603073"])
+            """,
+        media_ids=["1647575420009603073"])
 ]
 
 
