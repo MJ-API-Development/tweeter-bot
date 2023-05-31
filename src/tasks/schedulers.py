@@ -91,7 +91,7 @@ class TaskScheduler:
 
     async def send_tweet(self, tweet: dict[str, str]):
         try:
-            self._tweepy_api.update_status(**tweet)
+            self._tweepy_api.update_status(status=tweet.get('status'))
             return True
         except Forbidden as e:
             self._logger.error(f"Error updating status: {str(e)}")
