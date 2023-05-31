@@ -34,7 +34,6 @@ DEFAULT_TWEETS: list[dict[str, str]] = [
             - Stock Options And Splits Data
             - Financial News API
             - Social Media Trend Data For Stocks
-            - Sentiment Analysis for News & Social Media
             
             Create A free API Key today 
             https://eod-stock-api.site/plan-descriptions/basic
