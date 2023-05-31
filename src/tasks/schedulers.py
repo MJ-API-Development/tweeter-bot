@@ -111,8 +111,8 @@ class TaskScheduler:
             - {article.title}            
               {internal_link}
         """
-        _url: str = article.thumbnail.resolutions[0].url
-        if _url:
+        if article.thumbnail.resolutions:
+            _url: str = article.thumbnail.resolutions[0].url
             response = requests.get(_url)
             media_content = response.content
             media = self._tweepy_api.media_upload(filename=get_filename(_url), file=media_content)
