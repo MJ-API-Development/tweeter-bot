@@ -24,37 +24,36 @@ auth.set_access_token(access_token, access_token_secret)
 
 FIVE_MINUTE = 300
 
-DEFAULT_TWEETS: list[dict[str, str]] = [
-    dict(
-        status="""
-            EOD Stock Market API
-            
-            - Exchange & Ticker Data
-            - (EOD) Stock Data
-            - Fundamental Data
-            - Stock Options And Splits Data
-            - Financial News API
-            - Social Media Trend Data For Stocks
-            
-            Create A free API Key today 
-            https://eod-stock-api.site/plan-descriptions/basic
-            """,
-        media_ids=["1647575420009603073"]),
-    dict(
-        status="""
-            Financial & Business News API 
-    
-            - Articles By UUID
-            - Articles By Publishing Date
-            - Articles By Stock Tickers
-            - Articles By Exchange
-            - Get List of Exchanges & Tickers
-            - Get List of Publishers & Articles By Publisher
-    
-            Create A free API Key today 
-            https://bit.ly/financial-business-news-api
-            """,
-        media_ids=["1647575420009603073"])
+
+def compose_default_tweets(api_name, tweet_lines, media_ids=None):
+    tweet_text = "\n".join(tweet_lines)
+    tweet = {"status": f"{api_name}\n{tweet_text}"}
+    if media_ids:
+        tweet["media_ids"] = media_ids
+    return tweet
+
+
+DEFAULT_TWEETS = [
+    compose_default_tweets("EOD Stock Market API", [
+        "- Exchange & Ticker Data",
+        "- (EOD) Stock Data",
+        "- Fundamental Data",
+        "- Stock Options And Splits Data",
+        "- Financial News API",
+        "- Social Media Trend Data For Stocks",
+        "Create A free API Key today",
+        "https://eod-stock-api.site/plan-descriptions/basic"
+    ], media_ids=["1647575420009603073"]),
+    compose_default_tweets("Financial & Business News API", [
+        "- Articles By UUID",
+        "- Articles By Publishing Date",
+        "- Articles By Stock Tickers",
+        "- Articles By Exchange",
+        "- Get List of Exchanges & Tickers",
+        "- Get List of Publishers & Articles By Publisher",
+        "Create A free API Key today",
+        "https://bit.ly/financial-business-news-api"
+    ], media_ids=["1647575420009603073"])
 ]
 
 
@@ -96,6 +95,7 @@ class TaskScheduler:
             return True
         except Forbidden as e:
             self._logger.error(f"Error updating status: {str(e)}")
+            self._logger.info(f"Tweet that Caused the Errror : {tweet.get('status')}")
             return False
 
     async def do_create_tweet(self, article: ArticleData) -> dict[str, str]:
@@ -105,16 +105,9 @@ class TaskScheduler:
         internal_link: str = f"https://eod-stock-api.site/blog/financial-news/tweets/{article.uuid}"
 
         # Create the tweet text with hashtags
-        tweet_text: str = f"""Financial & Business News API
-        {hashtags}
-        - {article.title}
-        {internal_link}
-        """
+        tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
         if len(tweet_text) > self._max_status_length:
-            tweet_text = f"""Financial & Business News API
-            - {article.title}
-            {internal_link}                    
-            """
+            tweet_text = f"Financial & Business News API\n- {article.title}\n{internal_link}"
 
         if article.thumbnail.resolutions:
             _url: str = article.thumbnail.resolutions[0].url
@@ -149,7 +142,8 @@ class TaskScheduler:
                     tweet: dict[str, str] = await self.do_create_tweet(article=ArticleData(**article))
                     self._logger.info(f"Tweet : {tweet}")
                     await self._tweet_queue.put(tweet)
-                except ValidationError:
+                except ValidationError as e:
+                    self._logger.error(f"Error Creating Tweet: {str(e)}")
                     pass
 
     async def run(self):
@@ -166,9 +160,11 @@ class TaskScheduler:
 
         tweet: dict[str, str] | None = await self._tweet_queue.get()
         if tweet:
-            while tweet and not await self.send_tweet(tweet=tweet):
+            tweet_sent = await self.send_tweet(tweet=tweet)
+            while not tweet_sent:
                 await asyncio.sleep(delay=self._error_delay)
-                tweet: str = await self._tweet_queue.get()
+                tweet: dict[str, str] = await self._tweet_queue.get()
+                tweet_sent = await self.send_tweet(tweet=tweet)
 
         return None
 
