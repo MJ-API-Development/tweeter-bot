@@ -66,6 +66,7 @@ class TaskScheduler:
         self._tweet_queue = Queue()
         self._article_count: int = 50
         self._error_delay: int = FIVE_MINUTE
+        self._max_status_length: int = 280
         self._logger = init_logger(self.__class__.__name__)
 
     async def get_articles(self):
@@ -105,12 +106,18 @@ class TaskScheduler:
 
         # Create the tweet text with hashtags
         tweet_text: str = f"""
-            EOD Stock API - Financial & Business News
-            
+            Financial & Business News API           
             {hashtags}
             - {article.title}            
               {internal_link}
         """
+        if len(tweet_text) > self._max_status_length:
+            tweet_text = f"""
+            Financial & Business News API        
+            - {article.title}            
+              {internal_link}                    
+            """
+
         if article.thumbnail.resolutions:
             _url: str = article.thumbnail.resolutions[0].url
             response = requests.get(_url)
