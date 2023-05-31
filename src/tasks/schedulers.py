@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import requests
 import tweepy
 import unicodedata
+from pydantic import ValidationError
 from tweepy import Forbidden
 
 from src.config import config_instance
@@ -91,7 +92,7 @@ class TaskScheduler:
 
     async def send_tweet(self, tweet: dict[str, str]):
         try:
-            self._tweepy_api.update_status(status=tweet.get('status'))
+            self._tweepy_api.update_status(status=tweet.get('status').strip())
             return True
         except Forbidden as e:
             self._logger.error(f"Error updating status: {str(e)}")
@@ -104,17 +105,15 @@ class TaskScheduler:
         internal_link: str = f"https://eod-stock-api.site/blog/financial-news/tweets/{article.uuid}"
 
         # Create the tweet text with hashtags
-        tweet_text: str = f"""
-            Financial & Business News API           
-            {hashtags}
-            - {article.title}            
-              {internal_link}
+        tweet_text: str = f"""Financial & Business News API
+        {hashtags}
+        - {article.title}
+        {internal_link}
         """
         if len(tweet_text) > self._max_status_length:
-            tweet_text = f"""
-            Financial & Business News API        
-            - {article.title}            
-              {internal_link}                    
+            tweet_text = f"""Financial & Business News API
+            - {article.title}
+            {internal_link}                    
             """
 
         if article.thumbnail.resolutions:
@@ -146,9 +145,12 @@ class TaskScheduler:
             article = await self._article_queue.get()
             # Create Tweet
             if article:
-                tweet: dict[str, str] = await self.do_create_tweet(article=ArticleData(**article))
-                self._logger.info(f"Tweet : {tweet}")
-                await self._tweet_queue.put(tweet)
+                try:
+                    tweet: dict[str, str] = await self.do_create_tweet(article=ArticleData(**article))
+                    self._logger.info(f"Tweet : {tweet}")
+                    await self._tweet_queue.put(tweet)
+                except ValidationError:
+                    pass
 
     async def run(self):
         self._logger.info("Started Run")
