@@ -131,6 +131,8 @@ class TaskScheduler:
         else:
             tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
 
+        self._count += 1
+
         if len(tweet_text) > self._max_status_length:
             tweet_text = f"Financial & Business News API\n- {article.title}\n{internal_link}"
 
