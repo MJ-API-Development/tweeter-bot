@@ -53,6 +53,24 @@ DEFAULT_TWEETS = [
         "- Get List of Publishers & Articles By Publisher",
         "Create A free API Key today",
         "https://bit.ly/financial-business-news-api"
+    ], media_ids=["1647575420009603073"]),
+    compose_default_tweets("Financial & Business Professional Plan", [
+        "- Exchange & Ticker Data",
+        "- (EOD) Stock Data",
+        "- Fundamental Data",
+        "- Financial News API",
+        "- Social Media Trend Data For Stocks",
+        "Subscribe to our Professional Plan Today",
+        "https://eod-stock-api.site/plan-descriptions/professional"
+    ], media_ids=["1647575420009603073"]),
+    compose_default_tweets("Financial & Business Business Plan", [
+        "- Exchange & Ticker Data",
+        "- (EOD) Stock Data",
+        "- Fundamental Data",
+        "- Financial News API",
+        "- Social Media Trend Data For Stocks",
+        "Subscribe to our Business Plan Today",
+        "https://eod-stock-api.site/plan-descriptions/business"
     ], media_ids=["1647575420009603073"])
 ]
 
@@ -63,11 +81,13 @@ class TaskScheduler:
         self._tweepy_api = tweepy.API(auth=auth)
         self._article_queue = Queue()
         self._tweet_queue = Queue()
-        self._article_count: int = 50
+        self._article_count: int = 46
         self._error_delay: int = FIVE_MINUTE
         self._max_status_length: int = 280
         self._logger = init_logger(self.__class__.__name__)
-
+    async def init(self):
+        self._tweepy_api = tweepy.API(auth=auth)
+        
     async def get_articles(self):
         """
             **get_articles**
