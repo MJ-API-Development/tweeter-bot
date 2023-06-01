@@ -38,7 +38,6 @@ DEFAULT_TWEETS = [
         "- Exchange & Ticker Data",
         "- (EOD) Stock Data",
         "- Fundamental Data",
-        "- Stock Options And Splits Data",
         "- Financial News API",
         "- Social Media Trend Data For Stocks",
         "Create A free API Key today",
