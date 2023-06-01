@@ -83,10 +83,12 @@ class TaskScheduler:
         self._article_count: int = 46
         self._error_delay: int = FIVE_MINUTE
         self._max_status_length: int = 280
+        self._count: int = 0
         self._logger = init_logger(self.__class__.__name__)
+
     async def init(self):
         self._tweepy_api = tweepy.API(auth=auth)
-        
+
     async def get_articles(self):
         """
             **get_articles**
@@ -122,9 +124,13 @@ class TaskScheduler:
         # Extract ticker symbols as hashtags
         hashtags = ' '.join(['#' + ticker for ticker in article.tickers])
         internal_link: str = f"https://eod-stock-api.site/blog/financial-news/tweets/{article.uuid}"
-
+        business_api_link: str = "https://bit.ly/financial-business-news-api"
         # Create the tweet text with hashtags
-        tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
+        if self._count % 2 == 0:
+            tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\nAPI Integration: {business_api_link}"
+        else:
+            tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
+
         if len(tweet_text) > self._max_status_length:
             tweet_text = f"Financial & Business News API\n- {article.title}\n{internal_link}"
 
