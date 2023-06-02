@@ -80,7 +80,7 @@ class TaskScheduler:
         self._tweepy_api = tweepy.API(auth=auth)
         self._article_queue = Queue()
         self._tweet_queue = Queue()
-        self._article_count: int = 46
+        self._article_count: int = 15
         self._error_delay: int = FIVE_MINUTE
         self._max_status_length: int = 280
         self._count: int = 0
