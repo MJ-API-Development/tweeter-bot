@@ -30,6 +30,7 @@ class Logging(BaseSettings):
 
 
 class TweeterSettings(BaseSettings):
+
     consumer_key: str = Field(..., env="TWITTER_API_KEY")
     consumer_secret: str = Field(..., env="TWITTER_API_SECRET")
     access_token: str = Field(..., env="TWITTER_ACCESS_TOKEN")
