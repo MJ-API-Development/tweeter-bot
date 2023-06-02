@@ -127,7 +127,7 @@ class TaskScheduler:
         business_api_link: str = "https://bit.ly/financial-business-news-api"
         # Create the tweet text with hashtags
         if self._count % 2 == 0:
-            tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\nAPI Integration: {business_api_link}"
+            tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n - FOR API Integration: {business_api_link}"
         else:
             tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
 
