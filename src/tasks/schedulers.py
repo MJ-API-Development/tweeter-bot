@@ -116,7 +116,8 @@ class TaskScheduler:
             return True
         except Forbidden as e:
             self._logger.error(f"Error updating status: {str(e)}")
-            self._logger.info(f"Tweet that Caused the Errror : {tweet.get('status')}")
+            self._logger.info(f"Tweet that Caused the Error : {tweet.get('status')}")
+            self._tweepy_api = tweepy.API(auth=auth)
             return False
 
     async def do_create_tweet(self, article: ArticleData) -> dict[str, str]:
@@ -157,8 +158,8 @@ class TaskScheduler:
                 then send the tweet based on the article using send_tweet
         :return:
         """
-        await self._tweet_queue.put(DEFAULT_TWEETS[0])
-        await self._tweet_queue.put(DEFAULT_TWEETS[1])
+        for tweet in DEFAULT_TWEETS:
+            await self._tweet_queue.put(tweet)
 
         while self._article_queue.qsize() > 0:
             self._logger.info(f"Articles Found : {self._article_queue.qsize()}")
