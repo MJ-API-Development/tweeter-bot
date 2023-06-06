@@ -33,46 +33,47 @@ def compose_default_tweets(api_name, tweet_lines, media_ids=None):
     return tweet
 
 
-DEFAULT_TWEETS = [
-    compose_default_tweets("EOD Stock Market API", [
-        "- Exchange & Ticker Data",
-        "- (EOD) Stock Data",
-        "- Fundamental Data",
-        "- Financial News API",
-        "- Social Media Trend Data For Stocks",
-        "Create A free API Key today",
-        "https://eod-stock-api.site/plan-descriptions/basic"
-    ], media_ids=["1647575420009603073"]),
-    compose_default_tweets("Financial & Business News API", [
-        "- Articles By UUID",
-        "- Articles By Publishing Date",
-        "- Articles By Stock Tickers",
-        "- Articles By Exchange",
-        "- Get List of Exchanges & Tickers",
-        "- Get List of Publishers & Articles By Publisher",
-        "Create A free API Key today",
-        "https://bit.ly/financial-business-news-api"
-    ], media_ids=["1647575420009603073"]),
-    compose_default_tweets("Financial & Business Professional Plan", [
-        "- Exchange & Ticker Data",
-        "- (EOD) Stock Data",
-        "- Fundamental Data",
-        "- Financial News API",
-        "- Social Media Trend Data For Stocks",
-        "Subscribe to our Professional Plan Today",
-        "https://eod-stock-api.site/plan-descriptions/professional"
-    ], media_ids=["1647575420009603073"]),
-    compose_default_tweets("Financial & Business Business Plan", [
-        "- Exchange & Ticker Data",
-        "- (EOD) Stock Data",
-        "- Fundamental Data",
-        "- Financial News API",
-        "- Social Media Trend Data For Stocks",
-        "Subscribe to our Business Plan Today",
-        "https://eod-stock-api.site/plan-descriptions/business"
-    ], media_ids=["1647575420009603073"])
-]
+# DEFAULT_TWEETS = [
+#     compose_default_tweets("EOD Stock Market API", [
+#         "- Exchange & Ticker Data",
+#         "- (EOD) Stock Data",
+#         "- Fundamental Data",
+#         "- Financial News API",
+#         "- Social Media Trend Data For Stocks",
+#         "Create A free API Key today",
+#         "https://eod-stock-api.site/plan-descriptions/basic"
+#     ], media_ids=["1647575420009603073"]),
+#     compose_default_tweets("Financial & Business News API", [
+#         "- Articles By UUID",
+#         "- Articles By Publishing Date",
+#         "- Articles By Stock Tickers",
+#         "- Articles By Exchange",
+#         "- Get List of Exchanges & Tickers",
+#         "- Get List of Publishers & Articles By Publisher",
+#         "Create A free API Key today",
+#         "https://bit.ly/financial-business-news-api"
+#     ], media_ids=["1647575420009603073"]),
+#     compose_default_tweets("Financial & Business Professional Plan", [
+#         "- Exchange & Ticker Data",
+#         "- (EOD) Stock Data",
+#         "- Fundamental Data",
+#         "- Financial News API",
+#         "- Social Media Trend Data For Stocks",
+#         "Subscribe to our Professional Plan Today",
+#         "https://eod-stock-api.site/plan-descriptions/professional"
+#     ], media_ids=["1647575420009603073"]),
+#     compose_default_tweets("Financial & Business Business Plan", [
+#         "- Exchange & Ticker Data",
+#         "- (EOD) Stock Data",
+#         "- Fundamental Data",
+#         "- Financial News API",
+#         "- Social Media Trend Data For Stocks",
+#         "Subscribe to our Business Plan Today",
+#         "https://eod-stock-api.site/plan-descriptions/business"
+#     ], media_ids=["1647575420009603073"])
+# ]
 
+DEFAULT_TWEETS = []
 
 class TaskScheduler:
     def __init__(self):

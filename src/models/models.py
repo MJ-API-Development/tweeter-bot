@@ -31,15 +31,15 @@ class Resolution(BaseModel):
 
 
 class Thumbnail(BaseModel):
-    resolutions: list[Resolution]
+    resolutions: list[Resolution] | None
 
 
 class ArticleData(BaseModel):
-    datetime_published: str
-    link: str
-    providerPublishTime: int
-    publisher: str
-    sentiment: Sentiment
+    datetime_published: str | None
+    link: str | None
+    providerPublishTime: int | None
+    publisher: str | None
+    sentiment: Sentiment | None
     thumbnail: Thumbnail
     tickers: list[str] | None
     title: str
