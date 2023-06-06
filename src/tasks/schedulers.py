@@ -33,51 +33,50 @@ def compose_default_tweets(api_name, tweet_lines, media_ids=None):
     return tweet
 
 
-# DEFAULT_TWEETS = [
-#     compose_default_tweets("EOD Stock Market API", [
-#         "- Exchange & Ticker Data",
-#         "- (EOD) Stock Data",
-#         "- Fundamental Data",
-#         "- Financial News API",
-#         "- Social Media Trend Data For Stocks",
-#         "Create A free API Key today",
-#         "https://eod-stock-api.site/plan-descriptions/basic"
-#     ], media_ids=["1647575420009603073"]),
-#     compose_default_tweets("Financial & Business News API", [
-#         "- Articles By UUID",
-#         "- Articles By Publishing Date",
-#         "- Articles By Stock Tickers",
-#         "- Articles By Exchange",
-#         "- Get List of Exchanges & Tickers",
-#         "- Get List of Publishers & Articles By Publisher",
-#         "Create A free API Key today",
-#         "https://bit.ly/financial-business-news-api"
-#     ], media_ids=["1647575420009603073"]),
-#     compose_default_tweets("Financial & Business Professional Plan", [
-#         "- Exchange & Ticker Data",
-#         "- (EOD) Stock Data",
-#         "- Fundamental Data",
-#         "- Financial News API",
-#         "- Social Media Trend Data For Stocks",
-#         "Subscribe to our Professional Plan Today",
-#         "https://eod-stock-api.site/plan-descriptions/professional"
-#     ], media_ids=["1647575420009603073"]),
-#     compose_default_tweets("Financial & Business Business Plan", [
-#         "- Exchange & Ticker Data",
-#         "- (EOD) Stock Data",
-#         "- Fundamental Data",
-#         "- Financial News API",
-#         "- Social Media Trend Data For Stocks",
-#         "Subscribe to our Business Plan Today",
-#         "https://eod-stock-api.site/plan-descriptions/business"
-#     ], media_ids=["1647575420009603073"])
-# ]
+DEFAULT_TWEETS = [
+    compose_default_tweets("EOD Stock Market API", [
+        "- Exchange & Ticker Data",
+        "- (EOD) Stock Data",
+        "- Fundamental Data",
+        "- Financial News API",
+        "- Social Media Trend Data For Stocks",
+        "Create A free API Key today",
+        "https://eod-stock-api.site/plan-descriptions/basic"
+    ], media_ids=["1647575420009603073"]),
+    compose_default_tweets("Financial & Business News API", [
+        "- Articles By UUID",
+        "- Articles By Publishing Date",
+        "- Articles By Stock Tickers",
+        "- Articles By Exchange",
+        "- Get List of Exchanges & Tickers",
+        "- Get List of Publishers & Articles By Publisher",
+        "Create A free API Key today",
+        "https://bit.ly/financial-business-news-api"
+    ], media_ids=["1647575420009603073"]),
+    compose_default_tweets("Financial & Business Professional Plan", [
+        "- Exchange & Ticker Data",
+        "- (EOD) Stock Data",
+        "- Fundamental Data",
+        "- Financial News API",
+        "- Social Media Trend Data For Stocks",
+        "Subscribe to our Professional Plan Today",
+        "https://eod-stock-api.site/plan-descriptions/professional"
+    ], media_ids=["1647575420009603073"]),
+    compose_default_tweets("Financial & Business Business Plan", [
+        "- Exchange & Ticker Data",
+        "- (EOD) Stock Data",
+        "- Fundamental Data",
+        "- Financial News API",
+        "- Social Media Trend Data For Stocks",
+        "Subscribe to our Business Plan Today",
+        "https://eod-stock-api.site/plan-descriptions/business"
+    ], media_ids=["1647575420009603073"])
+]
 
-DEFAULT_TWEETS = []
 
 class TaskScheduler:
     def __init__(self):
-
+        self._run_counter = 0
         self._tweepy_api = tweepy.API(auth=auth)
         self._article_queue = Queue()
         self._tweet_queue = Queue()
@@ -159,8 +158,9 @@ class TaskScheduler:
                 then send the tweet based on the article using send_tweet
         :return:
         """
-        for tweet in DEFAULT_TWEETS:
-            await self._tweet_queue.put(tweet)
+        if self._run_counter % 5 == 0:
+            for tweet in DEFAULT_TWEETS:
+                await self._tweet_queue.put(tweet)
 
         while self._article_queue.qsize() > 0:
             self._logger.info(f"Articles Found : {self._article_queue.qsize()}")
@@ -174,6 +174,7 @@ class TaskScheduler:
                 except ValidationError as e:
                     self._logger.error(f"Error Creating Tweet: {str(e)}")
                     pass
+        self._run_counter += 1
 
     async def run(self):
         self._logger.info("Started Run")
