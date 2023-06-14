@@ -123,28 +123,20 @@ class TaskScheduler:
     async def do_create_tweet(self, article: ArticleData) -> dict[str, str]:
         self._logger.info("Creating Tweets")
         # Extract ticker symbols as hashtags
-        hashtags = ' '.join(['#' + ticker for ticker in article.tickers])
-        internal_link: str = f"https://eod-stock-api.site/blog/financial-news/tweets/{article.uuid}"
-        business_api_link: str = "https://bit.ly/financial-business-news-api"
+        if article.tickers:
+            hashtags = ''.join(['#' + ticker for ticker in article.tickers])
+        elif article.sentiment.stock_codes:
+            _codes = article.sentiment.stock_codes
+            hashtags = ''.join(['#' + ticker for ticker in _codes])
+        else:
+            hashtags = ""
+
         # Create the tweet text with hashtags
         _title: str = "Financial & Business News API"
-        _crop_len: int = self._max_status_length - len(_title) - 6
+        _crop_len: int = self._max_status_length - len(_title) - 6 - len(hashtags)
+        tweet_body = f"{article.sentiment.article_tldr[: _crop_len]}" if article.sentiment.article_tldr else article.title
 
-        if self._count % 2 == 0:
-            if article.sentiment and article.sentiment.article_tldr:
-                tweet_text = f"{_title}\n{article.sentiment.article_tldr[0: _crop_len]}"
-            else:
-                tweet_text: str = f"{_title}\n-{article.title}\n - FOR API Integration: {business_api_link}"
-        else:
-            if article.sentiment and article.sentiment.article_tldr:
-                tweet_text = f"{_title}\n{article.sentiment.article_tldr[0: _crop_len]}"
-            else:
-                tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
-
-        self._count += 1
-
-        if len(tweet_text) > self._max_status_length:
-            tweet_text = f"Financial & Business News API\n- {article.title}\n{internal_link}"
+        tweet_text = f"{_title}\n-{tweet_body}...\n{hashtags}"
 
         if article.thumbnail.resolutions:
             _url: str = article.thumbnail.resolutions[0].url
