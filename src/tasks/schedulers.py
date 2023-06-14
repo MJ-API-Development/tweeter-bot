@@ -82,7 +82,7 @@ class TaskScheduler:
         self._tweet_queue = Queue()
         self._article_count: int = 15
         self._error_delay: int = FIVE_MINUTE
-        self._max_status_length: int = 280
+        self._max_status_length: int = 250
         self._count: int = 0
         self._logger = init_logger(self.__class__.__name__)
 
@@ -127,10 +127,19 @@ class TaskScheduler:
         internal_link: str = f"https://eod-stock-api.site/blog/financial-news/tweets/{article.uuid}"
         business_api_link: str = "https://bit.ly/financial-business-news-api"
         # Create the tweet text with hashtags
+        _title: str = "Financial & Business News API"
+        _crop_len: int = self._max_status_length - len(_title) - 6
+
         if self._count % 2 == 0:
-            tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n - FOR API Integration: {business_api_link}"
+            if article.sentiment and article.sentiment.article_tldr:
+                tweet_text = f"{_title}\n{article.sentiment.article_tldr[0: _crop_len]}"
+            else:
+                tweet_text: str = f"{_title}\n-{article.title}\n - FOR API Integration: {business_api_link}"
         else:
-            tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
+            if article.sentiment and article.sentiment.article_tldr:
+                tweet_text = f"{_title}\n{article.sentiment.article_tldr[0: _crop_len]}"
+            else:
+                tweet_text: str = f"Financial & Business News API\n{hashtags}\n- {article.title}\n{internal_link}"
 
         self._count += 1
 
