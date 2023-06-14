@@ -124,17 +124,17 @@ class TaskScheduler:
         self._logger.info("Creating Tweets")
         # Extract ticker symbols as hashtags
         if article.tickers:
-            hashtags = ''.join(['#' + ticker for ticker in article.tickers])
+            hashtags = ''.join([' #' + ticker for ticker in article.tickers])
         elif article.sentiment and article.sentiment.stock_codes:
             _codes = article.sentiment.stock_codes
-            hashtags = ''.join(['#' + ticker for ticker in _codes])
+            hashtags = ''.join([' #' + ticker for ticker in _codes])
         else:
             hashtags = ""
 
         # Create the tweet text with hashtags
         _title: str = "Financial & Business News API"
         _crop_len: int = self._max_status_length - len(_title) - 6 - len(hashtags)
-        tweet_body = f"{article.sentiment.article_tldr[: _crop_len]}" if article.sentiment and article.sentiment.article_tldr else article.title
+        tweet_body = f"{article.sentiment.article_tldr}" if article.sentiment and article.sentiment.article_tldr else article.title
 
         tweet_text = f"{_title}\n-{tweet_body}...\n{hashtags}"
 
