@@ -76,7 +76,7 @@ DEFAULT_TWEETS = [
 
 class TaskScheduler:
     def __init__(self):
-        self._run_counter = 0
+        self._run_counter = 1
         self._tweepy_api = tweepy.API(auth=auth)
         self._article_queue = Queue()
         self._tweet_queue = Queue()
@@ -125,7 +125,7 @@ class TaskScheduler:
         # Extract ticker symbols as hashtags
         if article.tickers:
             hashtags = ''.join(['#' + ticker for ticker in article.tickers])
-        elif article.sentiment.stock_codes:
+        elif article.sentiment and article.sentiment.stock_codes:
             _codes = article.sentiment.stock_codes
             hashtags = ''.join(['#' + ticker for ticker in _codes])
         else:
@@ -134,7 +134,7 @@ class TaskScheduler:
         # Create the tweet text with hashtags
         _title: str = "Financial & Business News API"
         _crop_len: int = self._max_status_length - len(_title) - 6 - len(hashtags)
-        tweet_body = f"{article.sentiment.article_tldr[: _crop_len]}" if article.sentiment.article_tldr else article.title
+        tweet_body = f"{article.sentiment.article_tldr[: _crop_len]}" if article.sentiment and article.sentiment.article_tldr else article.title
 
         tweet_text = f"{_title}\n-{tweet_body}...\n{hashtags}"
 

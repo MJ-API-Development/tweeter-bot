@@ -15,13 +15,14 @@ class Sentiment(BaseModel):
     sentiment_title: None | str
     stock_codes: Optional[list[str]]
 
-    @classmethod
-    @validator('stock_codes')
-    def stock_codes(cls, value: list[str] | None):
-        if value is None:
-            return []
-        return value
-
+    @validator('stock_codes', pre=True)
+    def validate_stock_codes(cls, value):
+        if not value:
+            raise ValueError('invalid stock codes')
+        if isinstance(value, str):
+            return value.split(",")
+        if isinstance(value, list):
+            return value
 
 class Resolution(BaseModel):
     url: str
