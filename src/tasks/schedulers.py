@@ -159,7 +159,7 @@ class TaskScheduler:
                 then send the tweet based on the article using send_tweet
         :return:
         """
-        if self._run_counter % 5 == 0:
+        if self._run_counter % 2 == 0:
             for tweet in DEFAULT_TWEETS:
                 await self._tweet_queue.put(tweet)
 
