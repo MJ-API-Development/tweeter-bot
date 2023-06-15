@@ -134,7 +134,7 @@ class TaskScheduler:
         # Create the tweet text with hashtags
         _title: str = "Financial & Business News API"
         _crop_len: int = self._max_status_length - len(_title) - 6 - len(hashtags)
-        tweet_body = f"{article.sentiment.article_tldr}" if article.sentiment and article.sentiment.article_tldr else article.title
+        tweet_body = f"{article.sentiment.article_tldr[:_crop_len]}" if article.sentiment and article.sentiment.article_tldr else article.title
 
         tweet_text = f"{_title}\n-{tweet_body}...\n{hashtags}"
 
