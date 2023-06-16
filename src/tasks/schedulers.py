@@ -80,7 +80,7 @@ class TaskScheduler:
         self._tweepy_api = tweepy.API(auth=auth)
         self._article_queue = Queue()
         self._tweet_queue = Queue()
-        self._article_count: int = 100
+        self._article_count: int = 10
         self._error_delay: int = FIVE_MINUTE
         self._max_status_length: int = 250
         self._count: int = 0
@@ -132,7 +132,7 @@ class TaskScheduler:
             hashtags = ""
 
         # Create the tweet text with hashtags
-        _title: str = "Financial & Business News API"
+        _title: str = "https://eod-stock-api.site"
         _crop_len: int = self._max_status_length - len(_title) - 6 - len(hashtags)
         tweet_body = f"{article.sentiment.article_tldr[:_crop_len]}" if article.sentiment and article.sentiment.article_tldr else article.title
 
