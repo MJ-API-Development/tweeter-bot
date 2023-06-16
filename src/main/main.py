@@ -1,6 +1,8 @@
+from os import path
 import asyncio
-
-from fastapi import FastAPI
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, Request
 from src.config import config_instance
 from src.tasks.schedulers import TaskScheduler
 
@@ -24,6 +26,18 @@ app = FastAPI(
     redoc_url=settings.REDOC_URL
 )
 
+
+def static_folder() -> str:
+    return path.join(path.dirname(path.abspath(__file__)), '../../static')
+
+
+def template_folder() -> str:
+    return path.join(path.dirname(path.abspath(__file__)), '../../templates')
+
+
+app.mount("/static", StaticFiles(directory=static_folder()), name="static")
+templates = Jinja2Templates(directory=template_folder())
+
 scheduler = TaskScheduler()
 
 # this allows me to send 30 tweets over a period of 24 hours
@@ -39,3 +53,9 @@ async def scheduled_task():
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(scheduled_task())
+
+
+@app.get("/")
+def get_home(request: Request):
+    context = dict(title=settings.TITLE, description=settings.DESCRIPTION, request=request)
+    return templates.TemplateResponse("index.html", context)
