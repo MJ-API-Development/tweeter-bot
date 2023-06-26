@@ -3,7 +3,7 @@ import os
 import re
 from asyncio import Queue
 from urllib.parse import urlparse
-
+from io import BytesIO
 import requests
 import tweepy
 import unicodedata
@@ -142,7 +142,8 @@ class TaskScheduler:
             _url: str = article.thumbnail.resolutions[0].url
             response = requests.get(_url)
             media_content = response.content
-            media = self._tweepy_api.media_upload(filename=get_filename(_url), file=media_content)
+            media_file = BytesIO(media_content)
+            media = self._tweepy_api.media_upload(filename=get_filename(_url), file=media_file)
 
             tweet_data = dict(status=tweet_text, media_ids=[media.media_id])
         else:

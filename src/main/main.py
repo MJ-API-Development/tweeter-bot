@@ -58,4 +58,4 @@ async def startup_event():
 @app.get("/")
 def get_home(request: Request):
     context = dict(title=settings.TITLE, description=settings.DESCRIPTION, request=request)
-    return templates.TemplateResponse("index.html", context)
+    # return templates.TemplateResponse("index.html", context)
