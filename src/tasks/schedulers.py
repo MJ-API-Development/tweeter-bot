@@ -80,7 +80,7 @@ class TaskScheduler:
         self._tweepy_api = tweepy.API(auth=auth)
         self._article_queue = Queue()
         self._tweet_queue = Queue()
-        self._article_count: int = 10
+        self._article_count: int = 100
         self._error_delay: int = FIVE_MINUTE
         self._max_status_length: int = 250
         self._count: int = 0
@@ -184,9 +184,13 @@ class TaskScheduler:
             response: dict[str, str | dict[str, str] | int] = await self.get_articles()
             if response.get('status'):
                 payload = response.get('payload', [])
+                article_titles = set()
                 for article in payload:
-                    self._logger.info(f"Article : {article}")
-                    await self._article_queue.put(item=article)
+                    title = article.get('title')
+                    if title not in article_titles:
+                        article_titles.add(title)
+                        self._logger.info(f"Article : {article}")
+                        await self._article_queue.put(item=article)
 
             await self.create_tweets()
 
