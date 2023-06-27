@@ -132,7 +132,7 @@ class TaskScheduler:
             hashtags = ""
 
         # Create the tweet text with hashtags
-        _title: str = "https://eod-stock-api.site"
+        _title: str = "https://bit.ly/financial-business-news-api"
         _crop_len: int = self._max_status_length - len(_title) - 6 - len(hashtags)
         tweet_body = f"{article.sentiment.article_tldr[:_crop_len]}" if article.sentiment and article.sentiment.article_tldr else article.title
 
